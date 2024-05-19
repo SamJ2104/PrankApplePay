@@ -41,72 +41,72 @@
     const label = getParameterByName('label') || 'SamJ';
     const amount = getParameterByName('amount') || '50';
 
-    // Define ApplePayPaymentRequest
-    const request = {
-      countryCode: "GB",
-      currencyCode: "GBP",
-      merchantCapabilities: ["supports3DS"],
-      supportedNetworks: ["visa", "masterCard", "amex", "discover"],
-      total: {
-        label: label,
-        type: "final",
-        amount: amount
-      }
-    };
-
-    // Create ApplePaySession
-    const session = new ApplePaySession(3, request);
-
-    session.onvalidatemerchant = async event => {
-      // Call your own server to request a new merchant session.
-      const merchantSession = await validateMerchant();
-      session.completeMerchantValidation(merchantSession);
-    };
-
-    session.onpaymentmethodselected = event => {
-      // No updates or errors are needed, pass an empty object.
-      const update = {};
-      session.completePaymentMethodSelection(update);
-    };
-
-    session.onshippingmethodselected = event => {
-      // No updates or errors are needed, pass an empty object.
-      const update = {};
-      session.completeShippingMethodSelection(update);
-    };
-
-    session.onshippingcontactselected = event => {
-      const update = {};
-      session.completeShippingContactSelection(update);
-    };
-
-    session.onpaymentauthorized = event => {
-      const result = {
-        status: ApplePaySession.STATUS_SUCCESS
+          // Define ApplePayPaymentRequest
+      const request = {
+        countryCode: "GB",
+        currencyCode: "GBP",
+        merchantCapabilities: ["supports3DS"],
+        supportedNetworks: ["visa", "masterCard", "amex", "discover"],
+        total: {
+          label: label,
+          type: "final",
+          amount: amount
+        }
       };
-      session.completePayment(result);
-    };
 
-    session.oncouponcodechanged = event => {
-      const newTotal = calculateNewTotal(event.couponCode);
-      const newLineItems = calculateNewLineItems(event.couponCode);
-      const newShippingMethods = calculateNewShippingMethods(event.couponCode);
-      const errors = calculateErrors(event.couponCode);
+      // Create ApplePaySession
+      const session = new ApplePaySession(3, request);
 
-      session.completeCouponCodeChange({
-        newTotal: newTotal,
-        newLineItems: newLineItems,
-        newShippingMethods: newShippingMethods,
-        errors: errors,
-      });
-    };
+      session.onvalidatemerchant = async event => {
+        // Call your own server to request a new merchant session.
+        const merchantSession = await validateMerchant();
+        session.completeMerchantValidation(merchantSession);
+      };
 
-    session.oncancel = event => {
-      // Payment canceled by WebKit
-    };
+      session.onpaymentmethodselected = event => {
+        // No updates or errors are needed, pass an empty object.
+        const update = {};
+        session.completePaymentMethodSelection(update);
+      };
 
-    session.begin();
-  }
+      session.onshippingmethodselected = event => {
+        // No updates or errors are needed, pass an empty object.
+        const update = {};
+        session.completeShippingMethodSelection(update);
+      };
+
+      session.onshippingcontactselected = event => {
+        const update = {};
+        session.completeShippingContactSelection(update);
+      };
+
+      session.onpaymentauthorized = event => {
+        const result = {
+          status: ApplePaySession.STATUS_SUCCESS
+        };
+        session.completePayment(result);
+      };
+
+      session.oncouponcodechanged = event => {
+        const newTotal = calculateNewTotal(event.couponCode);
+        const newLineItems = calculateNewLineItems(event.couponCode);
+        const newShippingMethods = calculateNewShippingMethods(event.couponCode);
+        const errors = calculateErrors(event.couponCode);
+
+        session.completeCouponCodeChange({
+          newTotal: newTotal,
+          newLineItems: newLineItems,
+          newShippingMethods: newShippingMethods,
+          errors: errors,
+        });
+      };
+
+      session.oncancel = event => {
+        // Payment canceled by WebKit
+      };
+
+      session.begin();
+    }
 
 
 })();
