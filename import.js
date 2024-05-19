@@ -108,28 +108,5 @@
     session.begin();
   }
 
-  // Mock implementation of validateMerchant function
-  async function validateMerchant() {
-    // This should be replaced with your actual merchant validation logic
-    return {
-      // Mocked merchant session response
-    };
-  }
 
-  // Mock implementations for coupon code handling
-  function calculateNewTotal(couponCode) {
-    return { label: 'Total', amount: '50.00' };
-  }
-
-  function calculateNewLineItems(couponCode) {
-    return [];
-  }
-
-  function calculateNewShippingMethods(couponCode) {
-    return [];
-  }
-
-  function calculateErrors(couponCode) {
-    return [];
-  }
 })();
