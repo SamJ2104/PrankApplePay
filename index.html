@@ -6,114 +6,113 @@
   <meta name="viewport" content="width=device-width">
   <title>Click Anywhere to Continue...</title>
   <style>
-    body {
-      margin: 0px;
-      background-color: #ffffff;
-      color: #000000;
-      font-family: AvenirNext-Medium;
-      overflow: hidden;
-    }
-
-    apple-pay-button {
-      --apple-pay-button-width: 1000vh;
-      --apple-pay-button-height: 100vh;
-      --apple-pay-button-border-radius: 0px;
-      --apple-pay-button-padding: 0px 0px;
-      --apple-pay-button-box-sizing: border-box;
-    }
+  body{
+    margin: 0px;
+    background-color: #ffffff;
+    color: #000000;
+    font-family: AvenirNext-Medium;
+    overflow: hidden;
+  }
+  apple-pay-button {
+    --apple-pay-button-width: 1000vh;
+    --apple-pay-button-height: 100vh;
+    --apple-pay-button-border-radius: 0px;
+    --apple-pay-button-padding: 0px 0px;
+    --apple-pay-button-box-sizing: border-box;
+  }
   </style>
 </head>
 
 <body>
   Click Anywhere to Continue...
-  <script async crossorigin src="https://applepay.cdn-apple.com/jsapi/v1.1.0/apple-pay-sdk.js"></script>
+  <script async crossorigin
+    src="https://applepay.cdn-apple.com/jsapi/v1.1.0/apple-pay-sdk.js"
+    ></script>
   <apple-pay-button buttonstyle="white" type="plain" locale="en-US" onclick="onApplePayButtonClicked()"></apple-pay-button>
-  <script>
-    function onApplePayButtonClicked(amount = "50", label = "SamJ") {
+  <script>function onApplePayButtonClicked() { 
 
       if (!ApplePaySession) {
-        return;
+          return;
       }
 
       // Define ApplePayPaymentRequest
       const request = {
-        "countryCode": "GB",
-        "currencyCode": "GBP",
-        "merchantCapabilities": [
-          "supports3DS"
-        ],
-        "supportedNetworks": [
-          "visa",
-          "masterCard",
-          "amex",
-          "discover"
-        ],
-        "total": {
-          "label": label,
-          "type": "final",
-          "amount": amount
-        }
+          "countryCode": "GB",
+          "currencyCode": "GBP",
+          "merchantCapabilities": [
+              "supports3DS"
+          ],
+          "supportedNetworks": [
+              "visa",
+              "masterCard",
+              "amex",
+              "discover"
+          ],
+          "total": {
+              "label": "SamJ",
+              "type": "final",
+              "amount": "50"
+          }
       };
 
       // Create ApplePaySession
       const session = new ApplePaySession(3, request);
 
       session.onvalidatemerchant = async event => {
-        // Call your own server to request a new merchant session.
-        const merchantSession = await validateMerchant();
-        session.completeMerchantValidation(merchantSession);
+          // Call your own server to request a new merchant session.
+          const merchantSession = await validateMerchant();
+          session.completeMerchantValidation(merchantSession);
       };
 
       session.onpaymentmethodselected = event => {
-        // Define ApplePayPaymentMethodUpdate based on the selected payment method.
-        // No updates or errors are needed, pass an empty object.
-        const update = {};
-        session.completePaymentMethodSelection(update);
+          // Define ApplePayPaymentMethodUpdate based on the selected payment method.
+          // No updates or errors are needed, pass an empty object.
+          const update = {};
+          session.completePaymentMethodSelection(update);
       };
 
       session.onshippingmethodselected = event => {
-        // Define ApplePayShippingMethodUpdate based on the selected shipping method.
-        // No updates or errors are needed, pass an empty object. 
-        const update = {};
-        session.completeShippingMethodSelection(update);
+          // Define ApplePayShippingMethodUpdate based on the selected shipping method.
+          // No updates or errors are needed, pass an empty object. 
+          const update = {};
+          session.completeShippingMethodSelection(update);
       };
 
       session.onshippingcontactselected = event => {
-        // Define ApplePayShippingContactUpdate based on the selected shipping contact.
-        const update = {};
-        session.completeShippingContactSelection(update);
+          // Define ApplePayShippingContactUpdate based on the selected shipping contact.
+          const update = {};
+          session.completeShippingContactSelection(update);
       };
 
       session.onpaymentauthorized = event => {
-        // Define ApplePayPaymentAuthorizationResult
-        const result = {
-          "status": ApplePaySession.STATUS_SUCCESS
-        };
-        session.completePayment(result);
+          // Define ApplePayPaymentAuthorizationResult
+          const result = {
+              "status": ApplePaySession.STATUS_SUCCESS
+          };
+          session.completePayment(result);
       };
 
       session.oncouponcodechanged = event => {
-        // Define ApplePayCouponCodeUpdate
-        const newTotal = calculateNewTotal(event.couponCode);
-        const newLineItems = calculateNewLineItems(event.couponCode);
-        const newShippingMethods = calculateNewShippingMethods(event.couponCode);
-        const errors = calculateErrors(event.couponCode);
+          // Define ApplePayCouponCodeUpdate
+          const newTotal = calculateNewTotal(event.couponCode);
+          const newLineItems = calculateNewLineItems(event.couponCode);
+          const newShippingMethods = calculateNewShippingMethods(event.couponCode);
+          const errors = calculateErrors(event.couponCode);
 
-        session.completeCouponCodeChange({
-          newTotal: newTotal,
-          newLineItems: newLineItems,
-          newShippingMethods: newShippingMethods,
-          errors: errors,
-        });
+          session.completeCouponCodeChange({
+              newTotal: newTotal,
+              newLineItems: newLineItems,
+              newShippingMethods: newShippingMethods,
+              errors: errors,
+          });
       };
 
       session.oncancel = event => {
-        // Payment canceled by WebKit
+          // Payment canceled by WebKit
       };
 
       session.begin();
-    }
-  </script>
+  }</script>
 </body>
 
 </html>
